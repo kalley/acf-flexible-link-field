@@ -28,6 +28,7 @@ class acf_field_flexible_link extends acf_field_page_link
 			'allow_null' => 1,
 			'freeform' => 1,
 			'use_pages' => 1,
+			'depth' => null,
 		);
 
 
@@ -65,6 +66,7 @@ class acf_field_flexible_link extends acf_field_page_link
 <tr class="field_option field_option_<?php echo $this->name; ?> field_option_<?php echo $this->name; ?>_toggle">
 	<td class="label">
 		<label for=""><?php _e("Select from Pages?",'acf-flexible_link'); ?></label>
+		<p class="description">Select "No" if you want this to just be a URL field</p>
 	</td>
 	<td>
 		<?php
@@ -109,7 +111,33 @@ class acf_field_flexible_link extends acf_field_page_link
 </tr>
 <tr class="field_option field_option_<?php echo $this->name; ?>">
 	<td class="label">
+		<label for=""><?php _e("Limit Depth of Pages",'acf'); ?></label>
+		<p class="description">Leave empty to get all</p>
+	</td>
+	<td>
+		<?php
+
+		$choices = array(
+			'all'	=>	__("All",'acf')
+		);
+		$choices = apply_filters('acf/get_post_types', $choices);
+
+
+		do_action('acf/create_field', array(
+			'type'	=>	'text',
+			'name'	=>	'fields['.$key.'][depth]',
+			'value'	=>	$field['depth'],
+			'choices'	=>	$choices,
+			'multiple'	=>	1,
+		));
+
+		?>
+	</td>
+</tr>
+<tr class="field_option field_option_<?php echo $this->name; ?>">
+	<td class="label">
 		<label for=""><?php _e("Allow freeform?",'acf-flexible_link'); ?></label>
+		<p class="description">Let the user copy/paste a URL</p>
 	</td>
 	<td>
 		<?php
@@ -154,12 +182,42 @@ class acf_field_flexible_link extends acf_field_page_link
 	  {
   	  echo '<p class="howto toggle-arrow" id="internal-toggle" style="background-image:url(/wp-includes/images/toggle-arrow.png);padding-left:18px;">Or link to existing content</p>';
   	  $field['id'] = '';
-  	  $field['name'] = '';
+  	  $field['name'] = 'select-' . $field['name'];
   	  $field['class'] .= '-select';
+
+  	  add_filter('acf/fields/post_object/query/name=' . $field['name'], array($this, 'apply_depth'), 10, 2);
 
   		parent::create_field($field);
 	  }
 
+	}
+
+	function apply_depth($args, $field)
+	{
+	  global $wpdb;
+
+	  if ( $field['depth'] )
+	  {
+	    $post_types = $field['post_type'];
+  		if( in_array('all', $post_types) )
+  		{
+  			$post_types = apply_filters('acf/get_post_types', array());
+  		}
+  		$post_types = '"' . implode('","', $post_types) . '"';
+	    $andwhere = "AND post_type IN ($post_types) AND post_status IN ('publish','private','draft','inherit','future')";
+	    $stmt = "SELECT ID FROM $wpdb->posts WHERE post_parent = 0 $andwhere";
+
+	    for ( $i = 1; $i < $field['depth'] + 1; $i++ )
+	    {
+  	    $stmt = "SELECT ID FROM $wpdb->posts WHERE post_parent IN ($stmt) $andwhere";
+	    }
+
+  	  $ids = $wpdb->get_col($stmt);
+
+  	  $args['exclude'] = implode(',', $ids);
+	  }
+
+  	return $args;
 	}
 
 
