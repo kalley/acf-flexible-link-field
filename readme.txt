@@ -11,14 +11,30 @@ Adds a URL field for version 4. Allows for freeform entering or selecting from a
 
 == Description ==
 
-{{description}}
+This field works similarly to the link popup from the WYSIWYG field, giving the user the option between entering in a URL or choosing from a list of pages
+from within the Wordpress site. It works similar to the [Page Link](http://www.advancedcustomfields.com/resources/field-types/page-link/) field, giving the developer
+the option to limit the post_type that will be available (though someone could just go enter in the URL directly). It also give the option to limit the depth of the
+page type. Here's an example (parentheses denote depth):
+
+*Consider this hierarchy*
+
+ - services **(1)**
+   - home **(2)**
+     - plumbing **(3)**
+     - repair **(3)**
+   - business **(2)**
+     - hvac **(3)**
+
+So if you don't want the user to see plumbing, repair and hvac, give it a depth of 2.
+
+You can also use this as a complete replacement for the Page Link field, given that you make the url field readonly by choosing to not allow freeform entry, while
+getting the benefit of limiting the depth of the hierarchy.
 
 = Compatibility =
 
 This add-on will work with:
 
 * version 4 and up
-* version 3 and bellow
 
 == Installation ==
 
