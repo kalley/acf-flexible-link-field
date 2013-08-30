@@ -13,12 +13,12 @@ page type. Here's an example (parentheses denote depth):
 
 *Consider this hierarchy*
 
-> services **(1)**
-> - home **(2)**
-> - - plumbing **(3)**
-> - - repair **(3)**
-> - business **(2)**
-> - - hvac **(3)**
+ - services **(1)**
+   - home **(2)**
+     - plumbing **(3)**
+     - repair **(3)**
+   - business **(2)**
+     - hvac **(3)**
 
 So if you don't want the user to see plumbing, repair and hvac, give it a depth of 2.
 
