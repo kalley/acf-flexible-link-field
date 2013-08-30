@@ -27,7 +27,7 @@ class acf_field_flexible_link extends acf_field
 			'multiple' => 0,
 			'allow_null' => 1,
 			'freeform' => 1,
-			'use_pages' => 1,
+			'format' => 'pages',
 			'depth' => null,
 		);
 
@@ -98,7 +98,7 @@ class acf_field_flexible_link extends acf_field
 	  echo '<label for="' . $field['id'] . '">Enter a URL</label>';
 	  echo '<input type="text" id="' . $field['id'] . 'url" class="' . $field['class'] . ' ' . $field['class'] . '-url" name="' . $field['name'] . '[url]" value="' . $url . '"' . ( $field['freeform'] ? '' : ' readonly' ) . '>';
 
-	  if ( $field['use_pages'] )
+	  if ( $field['format'] == 'pages' )
 	  {
   	  echo '<p class="howto toggle-arrow" id="internal-toggle" style="background-image:url(/wp-includes/images/toggle-arrow.png);padding-left:18px;">Or link to existing content</p>';
   	  $field['id'] .= 'post_id';
@@ -182,23 +182,24 @@ class acf_field_flexible_link extends acf_field
 	function create_options( $field )
 	{
 	  $key = $field['name'];
+	  $class_base = 'field_option_' . $this->name;
 
 		?>
-<tr class="field_option field_option_<?php echo $this->name; ?> field_option_<?php echo $this->name; ?>_toggle">
+<tr class="field_option <?php echo $class_base; ?> <?php echo $class_base; ?>_toggle">
 	<td class="label">
 		<label for=""><?php _e("Select from Pages?",'acf-flexible_link'); ?></label>
-		<p class="description">Select "No" if you want this to just be a URL field</p>
+		<p class="description">What is shown on the edit page.</p>
 	</td>
 	<td>
 		<?php
 
 		do_action('acf/create_field', array(
 			'type'	=>	'radio',
-			'name'	=>	'fields['.$key.'][use_pages]',
-			'value'	=>	$field['use_pages'],
+			'name'	=>	'fields['.$key.'][format]',
+			'value'	=>	$field['format'],
 			'choices'	=>	array(
-				1	=>	__("Yes",'acf'),
-				0	=>	__("No",'acf'),
+				'pages'	=>	__("Page Link",'acf'),
+				'urlonly'	=>	__("URL Only",'acf'),
 			),
 			'layout'	=>	'horizontal',
 		));
@@ -206,7 +207,7 @@ class acf_field_flexible_link extends acf_field
 		?>
 	</td>
 </tr>
-<tr class="field_option field_option_<?php echo $this->name; ?>">
+<tr class="field_option <?php echo $class_base; ?> <?php echo $class_base; ?>-pages">
 	<td class="label">
 		<label for=""><?php _e("Post Type",'acf'); ?></label>
 	</td>
@@ -230,7 +231,7 @@ class acf_field_flexible_link extends acf_field
 		?>
 	</td>
 </tr>
-<tr class="field_option field_option_<?php echo $this->name; ?>">
+<tr class="field_option <?php echo $class_base; ?> <?php echo $class_base; ?>-pages">
 	<td class="label">
 		<label for=""><?php _e("Limit Depth of Pages",'acf'); ?></label>
 		<p class="description">Leave empty to get all</p>
@@ -255,7 +256,7 @@ class acf_field_flexible_link extends acf_field
 		?>
 	</td>
 </tr>
-<tr class="field_option field_option_<?php echo $this->name; ?>">
+<tr class="field_option <?php echo $class_base; ?> <?php echo $class_base; ?>-pages">
 	<td class="label">
 		<label for=""><?php _e("Allow freeform?",'acf-flexible_link'); ?></label>
 		<p class="description">Let the user copy/paste a URL</p>
@@ -387,7 +388,7 @@ class acf_field_flexible_link extends acf_field
 
 	function update_field($field, $post_id)
 	{
-		if ( ! $field['use_pages'] )
+		if ( $field['format'] == 'urlonly' )
 		{
   		$field['freeform'] = true;
 		}

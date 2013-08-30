@@ -13,8 +13,9 @@
 
   		// vars
   		var radio = $(this);
+  		var tr = radio.closest('tr');
 
-  		radio.closest('tr').nextAll('tr.field_option_flexible_link').toggle(!!Number(radio.val()));
+  		tr.nextAll('tr.field_option_flexible_link').hide().filter('.field_option_flexible_link-' + radio.val()).show();
 
   	});
 	}).on('acf/field_form-open', function(e, field){
