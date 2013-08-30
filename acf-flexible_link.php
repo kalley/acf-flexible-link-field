@@ -33,27 +33,6 @@ class acf_field_flexible_link_plugin
 
 		// version 4+
 		add_action('acf/register_fields', array($this, 'register_fields'));
-
-
-		// version 3-
-		add_action('init', array( $this, 'init' ), 5);
-	}
-
-
-	/*
-	*  Init
-	*
-	*  @description:
-	*  @since: 3.6
-	*  @created: 1/04/13
-	*/
-
-	function init()
-	{
-		if(function_exists('register_field'))
-		{
-			register_field('acf_field_flexible_link', dirname(__File__) . '/flexible_link-v3.php');
-		}
 	}
 
 	/*
@@ -66,7 +45,7 @@ class acf_field_flexible_link_plugin
 
 	function register_fields()
 	{
-		include_once('flexible_link-v4.php');
+		include_once('flexible_link.php');
 	}
 
 }
