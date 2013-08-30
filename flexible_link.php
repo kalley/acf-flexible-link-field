@@ -42,6 +42,8 @@ class acf_field_flexible_link extends acf_field
 			'version' => '1.0.0'
 		);
 
+	  add_action('wp_ajax_flexible_link_permalink', array($this, 'get_permalink'));
+
 	}
 
 	/*
@@ -94,7 +96,7 @@ class acf_field_flexible_link extends acf_field
 	  }
 
 	  echo '<label for="' . $field['id'] . '">Enter a URL</label>';
-	  echo '<input type="text" id="' . $field['id'] . 'url" class="' . $field['class'] . '" name="' . $field['name'] . '[url]" value="' . $url . '"' . ( $field['freeform'] ? '' : ' readonly' ) . '>';
+	  echo '<input type="text" id="' . $field['id'] . 'url" class="' . $field['class'] . ' ' . $field['class'] . '-url" name="' . $field['name'] . '[url]" value="' . $url . '"' . ( $field['freeform'] ? '' : ' readonly' ) . '>';
 
 	  if ( $field['use_pages'] )
 	  {
@@ -148,6 +150,19 @@ class acf_field_flexible_link extends acf_field
 	  }
 
   	return $args;
+	}
+
+
+	function get_permalink()
+	{
+	  global $wpdb;
+
+    $id = intval($_POST['id']);
+
+    header('Content-type: application/json');
+    echo json_encode(array( 'url' => get_permalink($id)));
+
+    die();
 	}
 
 
