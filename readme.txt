@@ -48,14 +48,9 @@ This add-on can be treated as both a WP plugin and a theme include.
 1.	Copy the 'acf-flexible_link' folder into your theme folder (can use sub folders). You can place the folder anywhere inside the 'wp-content' directory
 2.	Edit your functions.php file and add the code below (Make sure the path is correct to include the acf-flexible_link.php file)
 
-`
-add_action('acf/register_fields', 'my_register_fields');
-
-function my_register_fields()
-{
-	include_once('acf-flexible_link/acf-flexible_link.php');
-}
-`
+```php
+include_once('acf-flexible_link/acf-flexible_link.php');
+```
 
 == Changelog ==
 
