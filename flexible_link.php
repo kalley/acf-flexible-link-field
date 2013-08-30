@@ -86,16 +86,24 @@ class acf_field_flexible_link extends acf_field
 
 	function create_field( $field )
 	{
+	  $url = isset($field['value']['url']) ? $field['value']['url'] : '';
+	  $post_id = isset($field['value']['post_id']) ? $field['value']['post_id'] : '';
+	  if ( $post_id AND $post_id !== 'null' )
+	  {
+  	  $url = get_permalink($post_id);
+	  }
+
 	  echo '<label for="' . $field['id'] . '">Enter a URL</label>';
-	  echo '<input type="text" id="' . $field['id'] . '" class="' . $field['class'] . '" name="' . $field['name'] . '" value="' . $field['value'] . '"' . ( $field['freeform'] ? '' : ' readonly' ) . '>';
+	  echo '<input type="text" id="' . $field['id'] . 'url" class="' . $field['class'] . '" name="' . $field['name'] . '[url]" value="' . $url . '"' . ( $field['freeform'] ? '' : ' readonly' ) . '>';
 
 	  if ( $field['use_pages'] )
 	  {
   	  echo '<p class="howto toggle-arrow" id="internal-toggle" style="background-image:url(/wp-includes/images/toggle-arrow.png);padding-left:18px;">Or link to existing content</p>';
-  	  $field['id'] = '';
-  	  $field['name'] = 'select-' . $field['name'];
+  	  $field['id'] .= 'post_id';
+  	  $field['name'] .= '[post_id]';
   	  $field['class'] .= '-select';
   	  $field['type'] = 'post_object';
+  	  $field['value'] = $post_id;
 
   	  add_filter('acf/fields/post_object/query/name=' . $field['name'], array($this, 'apply_depth'), 10, 2);
 
@@ -335,12 +343,15 @@ class acf_field_flexible_link extends acf_field
 
 	function format_value_for_api( $value, $post_id, $field )
 	{
-		if( !$value OR $value == 'null' )
-		{
-			return false;
+		if ( ! $value ) {
+  		return false;
 		}
-
-		return $value;
+		$url = $value['url'];
+		if ( isset($value['post_id']) AND $value['post_id'] AND $value['post_id'] !== 'null' )
+		{
+  		$url = get_permalink($value['post_id']);
+		}
+		return $url;
 	}
 
 
